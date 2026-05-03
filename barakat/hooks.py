@@ -5,6 +5,29 @@ app_description = "Barakat custom ERP configuration and extensions"
 app_email = "osamatbaileh@iztechvalley.ps"
 app_license = "mit"
 
+fixtures = [
+	{
+		"dt": "Custom Field",
+		"filters": [
+			[
+				"fieldname",
+				"in",
+				[
+					"custom_pos_company",
+					"custom_pos_warehouse",
+					"custom_pos_cost_center",
+					"custom_pos_profile",
+					"custom_pos_pin",
+					"custom_external_id",
+					"custom_operator_employee",
+				],
+			]
+		],
+	},
+]
+
+after_install = "barakat.setup.install.after_install"
+
 # Apps
 # ------------------
 

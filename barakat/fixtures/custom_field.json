@@ -1,0 +1,102 @@
+[
+  {
+    "doctype": "Custom Field",
+    "name": "Branch-custom_pos_company",
+    "dt": "Branch",
+    "fieldname": "custom_pos_company",
+    "label": "POS Company",
+    "fieldtype": "Link",
+    "options": "Company",
+    "insert_after": ""
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Branch-custom_pos_warehouse",
+    "dt": "Branch",
+    "fieldname": "custom_pos_warehouse",
+    "label": "POS Warehouse",
+    "fieldtype": "Link",
+    "options": "Warehouse",
+    "insert_after": "custom_pos_company"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Branch-custom_pos_cost_center",
+    "dt": "Branch",
+    "fieldname": "custom_pos_cost_center",
+    "label": "POS Cost Center",
+    "fieldtype": "Link",
+    "options": "Cost Center",
+    "insert_after": "custom_pos_warehouse"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Branch-custom_pos_profile",
+    "dt": "Branch",
+    "fieldname": "custom_pos_profile",
+    "label": "POS Profile",
+    "fieldtype": "Link",
+    "options": "POS Profile",
+    "insert_after": "custom_pos_cost_center"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Employee-custom_pos_pin",
+    "dt": "Employee",
+    "fieldname": "custom_pos_pin",
+    "label": "POS PIN (4-6 digits)",
+    "fieldtype": "Data",
+    "length": 6,
+    "insert_after": ""
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Invoice-custom_external_id",
+    "dt": "Sales Invoice",
+    "fieldname": "custom_external_id",
+    "label": "External Id",
+    "fieldtype": "Data",
+    "unique": 1,
+    "insert_after": ""
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Sales Invoice-custom_operator_employee",
+    "dt": "Sales Invoice",
+    "fieldname": "custom_operator_employee",
+    "label": "Operator Employee",
+    "fieldtype": "Link",
+    "options": "Employee",
+    "insert_after": "custom_external_id"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "POS Invoice-custom_external_id",
+    "dt": "POS Invoice",
+    "fieldname": "custom_external_id",
+    "label": "External Id",
+    "fieldtype": "Data",
+    "unique": 1,
+    "insert_after": ""
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "POS Invoice-custom_operator_employee",
+    "dt": "POS Invoice",
+    "fieldname": "custom_operator_employee",
+    "label": "Operator Employee",
+    "fieldtype": "Link",
+    "options": "Employee",
+    "insert_after": "custom_external_id"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Journal Entry-custom_external_id",
+    "dt": "Journal Entry",
+    "fieldname": "custom_external_id",
+    "label": "External Id",
+    "fieldtype": "Data",
+    "unique": 1,
+    "insert_after": ""
+  }
+]
