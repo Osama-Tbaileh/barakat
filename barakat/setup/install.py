@@ -3,6 +3,7 @@ import frappe
 
 def after_install():
 	_enable_negative_stock()
+	_set_session_expiry()
 	_create_misc_item()
 	_create_default_customer()
 	frappe.db.commit()
@@ -10,6 +11,10 @@ def after_install():
 
 def _enable_negative_stock():
 	frappe.db.set_single_value("Stock Settings", "allow_negative_stock", 1)
+
+
+def _set_session_expiry():
+	frappe.db.set_single_value("System Settings", "session_expiry", "8760:00")
 
 
 def _create_misc_item():
