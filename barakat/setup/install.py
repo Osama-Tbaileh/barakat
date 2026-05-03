@@ -14,7 +14,9 @@ def _enable_negative_stock():
 
 
 def _set_session_expiry():
-	frappe.db.set_single_value("System Settings", "session_expiry", "8760:00")
+	doc = frappe.get_doc("System Settings")
+	doc.session_expiry = "8760:00"
+	doc.save(ignore_permissions=True)
 
 
 def _create_misc_item():
