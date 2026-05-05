@@ -17,6 +17,7 @@ fixtures = [
 					"custom_pos_warehouse",
 					"custom_pos_cost_center",
 					"custom_pos_profile",
+					"custom_pos_price_list",
 					"custom_pos_pin",
 					"custom_external_id",
 					"custom_operator_employee",
