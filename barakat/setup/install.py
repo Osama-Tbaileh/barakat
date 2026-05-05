@@ -40,11 +40,13 @@ def _create_misc_item():
 def _create_default_customer():
 	if frappe.db.exists("Customer", "Default Customer"):
 		return
+	customer_group = frappe.db.get_value("Customer Group", {"is_group": 0}, "name") or ""
+	territory = frappe.db.get_value("Territory", {"is_group": 0}, "name") or ""
 	frappe.get_doc(
 		{
 			"doctype": "Customer",
 			"customer_name": "Default Customer",
-			"customer_group": "All Customer Groups",
-			"territory": "All Territories",
+			"customer_group": customer_group,
+			"territory": territory,
 		}
-	).insert(ignore_permissions=True)
+	).insert(ignore_permissions=True, ignore_mandatory=True)
