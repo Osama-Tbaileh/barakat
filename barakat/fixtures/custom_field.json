@@ -45,8 +45,8 @@
     "dt": "Branch",
     "fieldname": "custom_pos_price_list",
     "label": "POS Price List",
-    "fieldtype": "Link",
-    "options": "Price List",
+    "fieldtype": "Read Only",
+    "fetch_from": "custom_pos_profile.selling_price_list",
     "insert_after": "custom_pos_profile"
   },
   {
