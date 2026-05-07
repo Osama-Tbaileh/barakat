@@ -51,6 +51,46 @@
   },
   {
     "doctype": "Custom Field",
+    "name": "POS Profile-custom_cash_account",
+    "dt": "POS Profile",
+    "fieldname": "custom_cash_account",
+    "label": "POS Cash Account",
+    "fieldtype": "Link",
+    "options": "Account",
+    "insert_after": ""
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "POS Profile-custom_counter_account",
+    "dt": "POS Profile",
+    "fieldname": "custom_counter_account",
+    "label": "POS Counter Account",
+    "fieldtype": "Link",
+    "options": "Account",
+    "insert_after": "custom_cash_account"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Branch-custom_cash_account",
+    "dt": "Branch",
+    "fieldname": "custom_cash_account",
+    "label": "POS Cash Account",
+    "fieldtype": "Read Only",
+    "fetch_from": "custom_pos_profile.custom_cash_account",
+    "insert_after": "custom_pos_price_list"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Branch-custom_counter_account",
+    "dt": "Branch",
+    "fieldname": "custom_counter_account",
+    "label": "POS Counter Account",
+    "fieldtype": "Read Only",
+    "fetch_from": "custom_pos_profile.custom_counter_account",
+    "insert_after": "custom_cash_account"
+  },
+  {
+    "doctype": "Custom Field",
     "name": "Employee-custom_pos_pin",
     "dt": "Employee",
     "fieldname": "custom_pos_pin",
@@ -118,6 +158,16 @@
     "fieldtype": "Data",
     "unique": 1,
     "insert_after": ""
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "Journal Entry-custom_pos_opening_entry",
+    "dt": "Journal Entry",
+    "fieldname": "custom_pos_opening_entry",
+    "label": "POS Opening Entry",
+    "fieldtype": "Link",
+    "options": "POS Opening Entry",
+    "insert_after": "custom_external_id"
   },
   {
     "doctype": "Custom Field",
