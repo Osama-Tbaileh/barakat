@@ -94,5 +94,3 @@ def sync_user_to_master(email, first_name, middle_name=None, last_name=None, sit
 				"User Site Mapping Sync"
 			)
 			# No raise — user was created successfully, mapping failure is non-fatal
-		)
-		raise  # re-raise so the queue retries the job
