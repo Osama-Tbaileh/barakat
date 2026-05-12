@@ -10,7 +10,7 @@ def enqueue_user_sync(doc, method):
 
 	frappe.enqueue(
 		"barakat.sync.sync_user_to_master",
-		queue="sync",
+		queue="short",
 		enqueue_after_commit=True,
 		email=doc.email,
 		first_name=doc.first_name,
