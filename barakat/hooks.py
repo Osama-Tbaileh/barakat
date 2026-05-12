@@ -39,7 +39,14 @@ after_install = "barakat.setup.install.after_install"
 doc_events = {
 	"User": {
 		"after_insert": "barakat.sync.enqueue_user_sync",
-	}
+	},
+	"Employee": {
+		"validate": "barakat.validations.validate_employee_pin",
+	},
+}
+
+doctype_js = {
+	"Employee": "public/js/employee.js",
 }
 
 override_doctype_class = {
