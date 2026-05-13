@@ -1,22 +1,23 @@
-[
-  {
-    "doctype": "DocType",
-    "name": "POS Employee Branch",
-    "module": "Barakat",
-    "custom": 1,
-    "istable": 1,
-    "editable_grid": 1,
-    "track_changes": 0,
-    "field_order": ["branch"],
-    "fields": [
-      {
-        "fieldname": "branch",
-        "fieldtype": "Link",
-        "in_list_view": 1,
-        "label": "Branch",
-        "options": "Branch",
-        "reqd": 1
-      }
-    ]
-  }
-]
+﻿{
+    "doctype":  "DocType",
+    "name":  "POS Employee Branch",
+    "module":  "Barakat",
+    "custom":  1,
+    "istable":  1,
+    "editable_grid":  1,
+    "track_changes":  0,
+    "field_order":  [
+                        "branch"
+                    ],
+    "fields":  [
+                   {
+                       "fieldname":  "branch",
+                       "fieldtype":  "Link",
+                       "in_list_view":  1,
+                       "label":  "Branch",
+                       "options":  "Branch",
+                       "reqd":  1
+                   }
+               ],
+    "allow_auto_repeat":  0
+}
