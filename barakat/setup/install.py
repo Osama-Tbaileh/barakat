@@ -20,19 +20,20 @@ def _set_session_expiry():
 def _create_misc_item():
 	if frappe.db.exists("Item", "MISC"):
 		return
+	item_group = frappe.db.get_value("Item Group", {"is_group": 0}, "name") or "All Item Groups"
 	frappe.get_doc(
 		{
 			"doctype": "Item",
 			"item_code": "MISC",
 			"item_name": "Miscellaneous",
-			"item_group": "Products",
+			"item_group": item_group,
 			"is_stock_item": 0,
 			"include_item_in_manufacturing": 0,
 			"is_sales_item": 1,
 			"is_purchase_item": 0,
 			"description": "Generic line for ad-hoc cashier items without a catalog entry.",
 		}
-	).insert(ignore_permissions=True)
+	).insert(ignore_permissions=True, ignore_mandatory=True)
 
 
 def _create_default_customer():
