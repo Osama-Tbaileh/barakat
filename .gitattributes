@@ -1,0 +1,24 @@
+# Normalize line endings: always store LF in repo, check out LF on all platforms
+* text=auto eol=lf
+
+# Fixtures are JSON — force LF, never CRLF
+*.json text eol=lf
+
+# Python source
+*.py text eol=lf
+
+# HTML/JS/CSS
+*.html text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+
+# Binary files — no line ending conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
