@@ -20,13 +20,12 @@ def _set_session_expiry():
 def _create_misc_item():
 	if frappe.db.exists("Item", "MISC"):
 		return
-	item_group = frappe.db.get_value("Item Group", {"is_group": 0}, "name") or "All Item Groups"
 	frappe.get_doc(
 		{
 			"doctype": "Item",
 			"item_code": "MISC",
 			"item_name": "Miscellaneous",
-			"item_group": item_group,
+			"item_group": "All Item Groups",
 			"is_stock_item": 0,
 			"include_item_in_manufacturing": 0,
 			"is_sales_item": 1,
