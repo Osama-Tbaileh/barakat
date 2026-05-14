@@ -202,7 +202,7 @@ def receive_user_from_master(user_data, new_password=None):
 
 def _verify_master_auth():
 	"""Raise AuthenticationError if the request is not from the configured master."""
-	auth = frappe.get_request_header("Authorization", "").strip()
+	token = frappe.get_request_header("X-Barakat-Master-Token", "").strip()
 	master_key = frappe.conf.get("master_api_key")
 	master_secret = frappe.conf.get("master_api_secret")
 
@@ -211,5 +211,5 @@ def _verify_master_auth():
 			"master_api_key / master_api_secret not configured on this site.",
 			frappe.AuthenticationError,
 		)
-	if auth != f"token {master_key}:{master_secret}":
+	if token != f"{master_key}:{master_secret}":
 		frappe.throw("Unauthorized.", frappe.AuthenticationError)
