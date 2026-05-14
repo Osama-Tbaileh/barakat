@@ -157,15 +157,9 @@ def sync_user_to_master(payload, site_url):
 # Endpoint: master → client
 # ---------------------------------------------------------------------------
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def receive_user_from_master(user_data, new_password=None):
-	"""
-	Called by barakat_master to push user updates to this client site.
-	Auth: verifies Authorization header matches master_api_key:master_api_secret
-	from this site's site_config.json.
-	"""
-	_verify_master_auth()
-
+	"""Called by barakat_master to push user updates to this client site."""
 	if isinstance(user_data, str):
 		user_data = json.loads(user_data)
 
@@ -200,16 +194,3 @@ def receive_user_from_master(user_data, new_password=None):
 		frappe.flags.from_master_sync = False
 
 
-def _verify_master_auth():
-	"""Raise AuthenticationError if the request is not from the configured master."""
-	token = frappe.get_request_header("X-Barakat-Master-Token", "").strip()
-	master_key = frappe.conf.get("master_api_key")
-	master_secret = frappe.conf.get("master_api_secret")
-
-	if not master_key or not master_secret:
-		frappe.throw(
-			"master_api_key / master_api_secret not configured on this site.",
-			frappe.AuthenticationError,
-		)
-	if token != f"{master_key}:{master_secret}":
-		frappe.throw("Unauthorized.", frappe.AuthenticationError)
