@@ -13,13 +13,15 @@ class BarakatPOSOpeningEntry(POSOpeningEntry):
 	def check_device_open_shift(self):
 		if not self.custom_device_id:
 			return
-		if frappe.db.exists(
-			"POS Opening Entry",
-			{"custom_device_id": self.custom_device_id, "status": "Open"},
-		):
+		# Scope the check to the same pos_profile (branch) so a device can have
+		# one open session per branch rather than being globally blocked.
+		filters = {"custom_device_id": self.custom_device_id, "status": "Open"}
+		if self.pos_profile:
+			filters["pos_profile"] = self.pos_profile
+		if frappe.db.exists("POS Opening Entry", filters):
 			frappe.throw(
 				title=_("Device Already Has Open Shift"),
 				msg=_(
-					"This device already has an open POS session. Close it before opening a new one."
+					"This device already has an open POS session for this branch. Close it before opening a new one."
 				),
 			)
