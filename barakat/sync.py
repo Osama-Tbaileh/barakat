@@ -81,6 +81,7 @@ def sync_user_to_master(payload, site_url):
 		"Authorization": f"token {api_key}:{api_secret}",
 		"Content-Type": "application/json",
 		"X-Barakat-Sync": "1",
+		"X-Barakat-Source-Site": site_url,
 	}
 
 	# Upsert: try PUT first, fall back to POST on 404
