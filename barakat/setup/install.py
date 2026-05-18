@@ -2,10 +2,11 @@ import frappe
 
 
 def after_install():
-	_enable_negative_stock()
-	_set_session_expiry()
-	_create_misc_item()
-	_create_default_customer()
+	for fn in [_enable_negative_stock, _set_session_expiry, _create_misc_item, _create_default_customer]:
+		try:
+			fn()
+		except Exception as e:
+			frappe.log_error(f"barakat after_install: {fn.__name__} failed: {e}", "Install")
 	frappe.db.commit()
 
 
