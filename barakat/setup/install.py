@@ -70,14 +70,14 @@ def _create_default_customer():
 def _create_device_custom_fields():
 	"""Create custom fields for the device-profile mapping system."""
 	fields = [
-		# Branch: table of POS Profiles (replaces single custom_pos_profile)
+		# Branch: table of POS Profiles
 		{
 			"dt": "Branch",
 			"fieldname": "custom_pos_profiles",
 			"label": "POS Profiles",
 			"fieldtype": "Table",
 			"options": "Branch POS Profile",
-			"insert_after": "custom_pos_profile",
+			"insert_after": "custom_pos_cost_center",
 		},
 		# POS Profile: which device is linked to this profile
 		{
