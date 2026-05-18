@@ -86,7 +86,7 @@ def _create_device_custom_fields():
 			"label": "Linked Device",
 			"fieldtype": "Link",
 			"options": "Device",
-			"insert_after": "name",
+			"insert_after": "company",
 			"read_only": 0,
 			"in_list_view": 1,
 		},
