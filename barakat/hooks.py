@@ -8,7 +8,7 @@ app_license = "mit"
 fixtures = [
 	{
 		"dt": "DocType",
-		"filters": [["name", "in", ["POS Employee Branch"]]],
+		"filters": [["name", "in", ["POS Employee Branch", "Device", "Branch POS Profile"]]],
 	},
 	{
 		"dt": "Custom Field",
@@ -21,6 +21,7 @@ fixtures = [
 					"custom_pos_warehouse",
 					"custom_pos_cost_center",
 					"custom_pos_profile",
+					"custom_pos_profiles",
 					"custom_pos_price_list",				"custom_cash_account",
 				"custom_counter_account",					"custom_pos_pin",
 					"custom_role_preset",
@@ -29,6 +30,8 @@ fixtures = [
 					"custom_operator_employee",				"custom_pos_opening_entry",					"custom_device_id",
 					"custom_opened_by_staff",
 					"custom_closed_by_staff",
+					"custom_device",
+					"custom_branch",
 				],
 			]
 		],
@@ -40,6 +43,9 @@ after_install = "barakat.setup.install.after_install"
 doc_events = {
 	"Employee": {
 		"validate": "barakat.validations.validate_employee_pin",
+	},
+	"Branch": {
+		"validate": "barakat.overrides.branch.validate_branch",
 	},
 }
 

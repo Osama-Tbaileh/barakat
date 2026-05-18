@@ -185,10 +185,18 @@ bench --site client1.yourdomain.com install-app your_sync_app
 In `client1.yourdomain.com/site_config.json`, add:
 ```json
 {
+  "master_url": "http://master.yourdomain.com",
   "master_api_key": "your_master_site_api_key",
-  "master_api_secret": "your_master_site_api_secret"
+  "master_api_secret": "your_master_site_api_secret",
+  "site_url": "client1.yourdomain.com"
 }
 ```
+
+> **`site_url`** — bare hostname (e.g. `pos.localhost:8000`) or full URL with scheme. Used by `redeem_client_token` to tell the master which client site is calling. Must match the `site_url` stored in `User Site Mapping` on the master.
+>
+> **`master_url`** — full URL to the master site (e.g. `http://master.localhost:8000`). Used by `redeem_client_token` to reach the master's token verification endpoint.
+>
+> **`master_api_key` / `master_api_secret`** — API key pair from an admin user on the master site (Settings → API Access).
 
 ### Step 3 — Create the OAuth Client on the Master Site
 

@@ -2,7 +2,13 @@ import frappe
 
 
 def after_install():
-	for fn in [_enable_negative_stock, _set_session_expiry, _create_misc_item, _create_default_customer]:
+	for fn in [
+		_enable_negative_stock,
+		_set_session_expiry,
+		_create_misc_item,
+		_create_default_customer,
+		_create_device_custom_fields,
+	]:
 		try:
 			fn()
 		except Exception as e:
@@ -59,3 +65,45 @@ def _create_default_customer():
 			"territory": territory,
 		}
 	).insert(ignore_permissions=True, ignore_mandatory=True)
+
+
+def _create_device_custom_fields():
+	"""Create custom fields for the device-profile mapping system."""
+	fields = [
+		# Branch: table of POS Profiles (replaces single custom_pos_profile)
+		{
+			"dt": "Branch",
+			"fieldname": "custom_pos_profiles",
+			"label": "POS Profiles",
+			"fieldtype": "Table",
+			"options": "Branch POS Profile",
+			"insert_after": "custom_pos_profile",
+		},
+		# POS Profile: which device is linked to this profile
+		{
+			"dt": "POS Profile",
+			"fieldname": "custom_device",
+			"label": "Linked Device",
+			"fieldtype": "Link",
+			"options": "Device",
+			"insert_after": "name",
+			"read_only": 0,
+			"in_list_view": 1,
+		},
+		# POS Profile: which branch this profile belongs to (read-only, set by Branch validate)
+		{
+			"dt": "POS Profile",
+			"fieldname": "custom_branch",
+			"label": "Branch",
+			"fieldtype": "Link",
+			"options": "Branch",
+			"insert_after": "custom_device",
+			"read_only": 1,
+			"in_list_view": 1,
+		},
+	]
+
+	for f in fields:
+		if frappe.db.exists("Custom Field", {"dt": f["dt"], "fieldname": f["fieldname"]}):
+			continue
+		frappe.get_doc({"doctype": "Custom Field", **f}).insert(ignore_permissions=True)
