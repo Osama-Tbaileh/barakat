@@ -11,26 +11,6 @@
   },
   {
     "doctype": "Custom Field",
-    "name": "Branch-custom_pos_warehouse",
-    "dt": "Branch",
-    "fieldname": "custom_pos_warehouse",
-    "label": "POS Warehouse",
-    "fieldtype": "Link",
-    "options": "Warehouse",
-    "insert_after": "custom_pos_company"
-  },
-  {
-    "doctype": "Custom Field",
-    "name": "Branch-custom_pos_cost_center",
-    "dt": "Branch",
-    "fieldname": "custom_pos_cost_center",
-    "label": "POS Cost Center",
-    "fieldtype": "Link",
-    "options": "Cost Center",
-    "insert_after": "custom_pos_warehouse"
-  },
-  {
-    "doctype": "Custom Field",
     "name": "POS Profile-custom_cash_account",
     "dt": "POS Profile",
     "fieldname": "custom_cash_account",

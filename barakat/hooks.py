@@ -18,8 +18,6 @@ fixtures = [
 				"in",
 				[
 					"custom_pos_company",
-					"custom_pos_warehouse",
-					"custom_pos_cost_center",
 					"custom_pos_profiles",
 					"custom_pos_pin",
 					"custom_role_preset",

@@ -77,7 +77,7 @@ def _create_device_custom_fields():
 			"label": "POS Profiles",
 			"fieldtype": "Table",
 			"options": "Branch POS Profile",
-			"insert_after": "custom_pos_cost_center",
+			"insert_after": "custom_pos_company",
 		},
 		# POS Profile: which device is linked to this profile
 		{
