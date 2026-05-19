@@ -11,6 +11,40 @@
   },
   {
     "doctype": "Custom Field",
+    "name": "Branch-custom_pos_profiles",
+    "dt": "Branch",
+    "fieldname": "custom_pos_profiles",
+    "label": "POS Profiles",
+    "fieldtype": "Table",
+    "options": "Branch POS Profile",
+    "insert_after": "custom_pos_company"
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "POS Profile-custom_device",
+    "dt": "POS Profile",
+    "fieldname": "custom_device",
+    "label": "Linked Device",
+    "fieldtype": "Link",
+    "options": "Device",
+    "insert_after": "company",
+    "read_only": 0,
+    "in_list_view": 1
+  },
+  {
+    "doctype": "Custom Field",
+    "name": "POS Profile-custom_branch",
+    "dt": "POS Profile",
+    "fieldname": "custom_branch",
+    "label": "Branch",
+    "fieldtype": "Link",
+    "options": "Branch",
+    "insert_after": "custom_device",
+    "read_only": 1,
+    "in_list_view": 1
+  },
+  {
+    "doctype": "Custom Field",
     "name": "POS Profile-custom_cash_account",
     "dt": "POS Profile",
     "fieldname": "custom_cash_account",
