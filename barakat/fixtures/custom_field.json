@@ -31,16 +31,6 @@
   },
   {
     "doctype": "Custom Field",
-    "name": "Branch-custom_pos_price_list",
-    "dt": "Branch",
-    "fieldname": "custom_pos_price_list",
-    "label": "POS Price List",
-    "fieldtype": "Link",
-    "options": "Price List",
-    "insert_after": "custom_pos_cost_center"
-  },
-  {
-    "doctype": "Custom Field",
     "name": "POS Profile-custom_cash_account",
     "dt": "POS Profile",
     "fieldname": "custom_cash_account",
@@ -53,26 +43,6 @@
     "doctype": "Custom Field",
     "name": "POS Profile-custom_counter_account",
     "dt": "POS Profile",
-    "fieldname": "custom_counter_account",
-    "label": "POS Counter Account",
-    "fieldtype": "Link",
-    "options": "Account",
-    "insert_after": "custom_cash_account"
-  },
-  {
-    "doctype": "Custom Field",
-    "name": "Branch-custom_cash_account",
-    "dt": "Branch",
-    "fieldname": "custom_cash_account",
-    "label": "POS Cash Account",
-    "fieldtype": "Link",
-    "options": "Account",
-    "insert_after": "custom_pos_price_list"
-  },
-  {
-    "doctype": "Custom Field",
-    "name": "Branch-custom_counter_account",
-    "dt": "Branch",
     "fieldname": "custom_counter_account",
     "label": "POS Counter Account",
     "fieldtype": "Link",
