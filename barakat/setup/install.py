@@ -5,6 +5,7 @@ def after_install():
 	for fn in [
 		_enable_negative_stock,
 		_set_session_expiry,
+		_set_pos_invoice_type,
 		_create_misc_item,
 		_create_default_customer,
 		_create_device_custom_fields,
@@ -18,6 +19,10 @@ def after_install():
 
 def _enable_negative_stock():
 	frappe.db.set_single_value("Stock Settings", "allow_negative_stock", 1)
+
+
+def _set_pos_invoice_type():
+	frappe.db.set_single_value("POS Settings", "invoice_type", "POS Invoice")
 
 
 def _set_session_expiry():
