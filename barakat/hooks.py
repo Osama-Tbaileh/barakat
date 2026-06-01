@@ -55,6 +55,7 @@ doc_events = {
 
 doctype_js = {
 	"Employee": "public/js/employee.js",
+	"POS Profile": "public/js/pos_profile.js",
 }
 
 override_doctype_class = {
