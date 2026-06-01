@@ -5,6 +5,7 @@ frappe.ui.form.on("POS Profile", {
 				filters: [
 					["account_type", "=", "Cash"],
 					["company", "=", doc.company],
+					["is_group", "=", 0],
 				],
 			};
 		});
@@ -13,6 +14,7 @@ frappe.ui.form.on("POS Profile", {
 				filters: [
 					["account_type", "=", "Receivable"],
 					["company", "=", doc.company],
+					["is_group", "=", 0],
 				],
 			};
 		});
@@ -21,6 +23,7 @@ frappe.ui.form.on("POS Profile", {
 				filters: [
 					["root_type", "=", "Expense"],
 					["company", "=", doc.company],
+					["is_group", "=", 0],
 				],
 			};
 		});
@@ -29,6 +32,7 @@ frappe.ui.form.on("POS Profile", {
 				filters: [
 					["root_type", "in", ["Equity", "Liability"]],
 					["company", "=", doc.company],
+					["is_group", "=", 0],
 				],
 			};
 		});
@@ -37,6 +41,7 @@ frappe.ui.form.on("POS Profile", {
 				filters: [
 					["account_type", "=", "Bank"],
 					["company", "=", doc.company],
+					["is_group", "=", 0],
 				],
 			};
 		});
