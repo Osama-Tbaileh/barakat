@@ -122,42 +122,52 @@ def _create_device_custom_fields():
 			"fieldtype": "Link",
 			"options": "Account",
 			"insert_after": "custom_branch",
+			"link_filters": "[['account_type', '=', 'Cash'], ['company', '=', 'eval:doc.company']]",
 		},
-		# POS Profile: account used for the other side of salary advance movements
+		# POS Profile: account used for the other side of salary advance movements.
+		# Must be Receivable type so ERPNext can tag the employee as a party on the JE.
 		{
 			"dt": "POS Profile",
 			"fieldname": "custom_salary_advance_account",
 			"label": "Salary Advance Account",
+			"description": "Must be a Receivable type account so ERPNext can track the balance per employee.",
 			"fieldtype": "Link",
 			"options": "Account",
 			"insert_after": "custom_cash_account",
+			"link_filters": "[['account_type', '=', 'Receivable'], ['company', '=', 'eval:doc.company']]",
 		},
 		# POS Profile: account used for the other side of expense movements (maintenance, petty cash, other)
 		{
 			"dt": "POS Profile",
 			"fieldname": "custom_expense_account",
 			"label": "Expense Account",
+			"description": "Used for Maintenance, Petty Cash, and Other cash out movements.",
 			"fieldtype": "Link",
 			"options": "Account",
 			"insert_after": "custom_salary_advance_account",
+			"link_filters": "[['root_type', '=', 'Expense'], ['company', '=', 'eval:doc.company']]",
 		},
 		# POS Profile: account used for the other side of owner deposit movements
 		{
 			"dt": "POS Profile",
 			"fieldname": "custom_owner_deposit_account",
 			"label": "Owner Deposit Account",
+			"description": "Used when the owner adds money to the drawer. Typically an Equity or Liability account.",
 			"fieldtype": "Link",
 			"options": "Account",
 			"insert_after": "custom_expense_account",
+			"link_filters": "[['root_type', 'in', ['Equity', 'Liability']], ['company', '=', 'eval:doc.company']]",
 		},
 		# POS Profile: bank account used for the other side of bank deposit movements
 		{
 			"dt": "POS Profile",
 			"fieldname": "custom_bank_account",
 			"label": "Bank Account",
+			"description": "Used when cash is deposited from the drawer to the bank.",
 			"fieldtype": "Link",
 			"options": "Account",
 			"insert_after": "custom_owner_deposit_account",
+			"link_filters": "[['account_type', '=', 'Bank'], ['company', '=', 'eval:doc.company']]",
 		},
 	]
 
