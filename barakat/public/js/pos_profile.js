@@ -31,6 +31,7 @@ frappe.ui.form.on("POS Profile", {
 			return {
 				filters: [
 					["root_type", "in", ["Equity", "Liability"]],
+					["account_type", "not in", ["Receivable", "Payable"]],
 					["company", "=", doc.company],
 					["is_group", "=", 0],
 				],
