@@ -1,0 +1,238 @@
+import frappe
+from frappe import _
+
+
+@frappe.whitelist()
+def get_shift_summary(opening_entry_name: str) -> dict:
+	"""
+	Returns aggregate cash summary for a POS Opening Entry.
+	Used by the desktop app when local DB is wiped and user wants to close the shift.
+	"""
+	if not opening_entry_name:
+		frappe.throw(_("opening_entry_name is required."))
+
+	opening = frappe.get_doc("POS Opening Entry", opening_entry_name)
+
+	opening_cash = 0.0
+	for row in (opening.balance_details or []):
+		if row.mode_of_payment == "Cash":
+			opening_cash = float(row.opening_amount or 0)
+			break
+
+	# Cash sales and refunds from POS Invoices linked to this profile
+	# after the opening date (standard ERPNext has no direct link on invoice)
+	invoices = frappe.db.sql("""
+		SELECT pi.name, pi.is_return,
+			COALESCE(SUM(sip.amount), 0) AS cash_amount
+		FROM `tabPOS Invoice` pi
+		LEFT JOIN `tabSales Invoice Payment` sip
+			ON sip.parent = pi.name AND sip.mode_of_payment = 'Cash'
+		WHERE pi.pos_profile = %(pos_profile)s
+		  AND pi.docstatus = 1
+		  AND pi.posting_date >= %(start_date)s
+		GROUP BY pi.name
+	""", {"pos_profile": opening.pos_profile, "start_date": opening.period_start_date}, as_dict=True)
+
+	cash_sales = sum(float(inv.cash_amount or 0) for inv in invoices if not inv.is_return)
+	cash_refunds = sum(abs(float(inv.cash_amount or 0)) for inv in invoices if inv.is_return)
+
+	# Cash movements from Journal Entries linked to this opening entry
+	journals = frappe.db.sql("""
+		SELECT je.name, je.user_remark,
+			jea.debit_in_account_currency,
+			jea.credit_in_account_currency,
+			jea.account
+		FROM `tabJournal Entry` je
+		INNER JOIN `tabJournal Entry Account` jea ON jea.parent = je.name
+		WHERE je.custom_pos_opening_entry = %(opening)s
+		  AND je.docstatus = 1
+	""", {"opening": opening_entry_name}, as_dict=True)
+
+	# The cash drawer side is the credit on cash-out, debit on cash-in.
+	# We aggregate by journal entry (one JE per movement) using the cash account rows.
+	cash_account = frappe.db.get_value("POS Profile", opening.pos_profile, "custom_cash_account")
+	cash_in = 0.0
+	cash_out = 0.0
+	seen_journals = set()
+	for row in journals:
+		if row.name in seen_journals:
+			continue
+		if row.account != cash_account:
+			continue
+		seen_journals.add(row.name)
+		debit = float(row.debit_in_account_currency or 0)
+		credit = float(row.credit_in_account_currency or 0)
+		if debit > 0:
+			cash_in += debit
+		elif credit > 0:
+			cash_out += credit
+
+	expected_total = opening_cash + cash_sales - cash_refunds + cash_in - cash_out
+
+	return {
+		"opening_cash": opening_cash,
+		"cash_sales": cash_sales,
+		"cash_refunds": cash_refunds,
+		"cash_in": cash_in,
+		"cash_out": cash_out,
+		"expected_total": expected_total,
+		"orders_count": len([inv for inv in invoices if not inv.is_return]),
+	}
+
+
+@frappe.whitelist()
+def get_shift_orders(opening_entry_name: str) -> dict:
+	"""
+	Returns all POS Invoices and Journal Entries for a shift so the desktop app
+	can restore local records after a DB wipe and resume the shift.
+	"""
+	if not opening_entry_name:
+		frappe.throw(_("opening_entry_name is required."))
+
+	opening = frappe.get_doc("POS Opening Entry", opening_entry_name)
+
+	# Fetch POS Invoices
+	invoices = frappe.db.sql("""
+		SELECT
+			pi.name, pi.customer, pi.pos_profile, pi.currency,
+			pi.net_total, pi.grand_total, pi.discount_amount,
+			pi.is_return, pi.return_against,
+			pi.posting_date, pi.creation,
+			pi.custom_external_id, pi.custom_operator_employee,
+			pi.owner
+		FROM `tabPOS Invoice` pi
+		WHERE pi.pos_profile = %(pos_profile)s
+		  AND pi.docstatus = 1
+		  AND pi.posting_date >= %(start_date)s
+		ORDER BY pi.creation ASC
+	""", {"pos_profile": opening.pos_profile, "start_date": opening.period_start_date}, as_dict=True)
+
+	# Fetch items + payments per invoice
+	invoice_names = [inv.name for inv in invoices]
+	items_by_invoice: dict = {}
+	payments_by_invoice: dict = {}
+
+	if invoice_names:
+		items = frappe.db.sql("""
+			SELECT parent, item_code, item_name, qty, rate, amount,
+				discount_percentage, discount_amount
+			FROM `tabPOS Invoice Item`
+			WHERE parent IN %(names)s
+		""", {"names": invoice_names}, as_dict=True)
+		for item in items:
+			items_by_invoice.setdefault(item.parent, []).append(item)
+
+		payments = frappe.db.sql("""
+			SELECT parent, mode_of_payment, amount
+			FROM `tabSales Invoice Payment`
+			WHERE parent IN %(names)s
+		""", {"names": invoice_names}, as_dict=True)
+		for payment in payments:
+			payments_by_invoice.setdefault(payment.parent, []).append(payment)
+
+	orders = []
+	for inv in invoices:
+		orders.append({
+			"name": inv.name,
+			"customer": inv.customer,
+			"pos_profile": inv.pos_profile,
+			"currency": inv.currency,
+			"net_total": float(inv.net_total or 0),
+			"grand_total": float(inv.grand_total or 0),
+			"discount_amount": float(inv.discount_amount or 0),
+			"is_return": bool(inv.is_return),
+			"return_against": inv.return_against,
+			"posting_date": str(inv.posting_date),
+			"creation": str(inv.creation),
+			"external_id": inv.custom_external_id,
+			"operator_employee": inv.custom_operator_employee,
+			"owner": inv.owner,
+			"items": [
+				{
+					"item_code": it.item_code,
+					"item_name": it.item_name,
+					"qty": float(it.qty or 0),
+					"rate": float(it.rate or 0),
+					"amount": float(it.amount or 0),
+					"discount_percentage": float(it.discount_percentage or 0),
+					"discount_amount": float(it.discount_amount or 0),
+				}
+				for it in items_by_invoice.get(inv.name, [])
+			],
+			"payments": [
+				{
+					"mode_of_payment": p.mode_of_payment,
+					"amount": float(p.amount or 0),
+				}
+				for p in payments_by_invoice.get(inv.name, [])
+			],
+		})
+
+	# Fetch Journal Entries (cash movements)
+	journals = frappe.db.sql("""
+		SELECT je.name, je.user_remark, je.posting_date, je.creation,
+			je.custom_external_id
+		FROM `tabJournal Entry` je
+		WHERE je.custom_pos_opening_entry = %(opening)s
+		  AND je.docstatus = 1
+		ORDER BY je.creation ASC
+	""", {"opening": opening_entry_name}, as_dict=True)
+
+	cash_account = frappe.db.get_value(
+		"POS Profile", opening.pos_profile, "custom_cash_account"
+	)
+	movements = []
+	for je in journals:
+		accounts = frappe.db.get_all(
+			"Journal Entry Account",
+			filters={"parent": je.name},
+			fields=["account", "debit_in_account_currency", "credit_in_account_currency"],
+		)
+		# Determine direction from the cash account row
+		direction = None
+		amount = 0.0
+		for acc in accounts:
+			if acc.account == cash_account:
+				if float(acc.debit_in_account_currency or 0) > 0:
+					direction = "in"
+					amount = float(acc.debit_in_account_currency)
+				elif float(acc.credit_in_account_currency or 0) > 0:
+					direction = "out"
+					amount = float(acc.credit_in_account_currency)
+				break
+		if direction is None:
+			continue
+
+		# Parse category from user_remark: "[POS Category] reason"
+		remark = je.user_remark or ""
+		category = "Other"
+		reason = remark
+		if remark.startswith("[POS ") and "]" in remark:
+			end = remark.index("]")
+			category = remark[5:end].strip()
+			reason = remark[end + 1:].strip()
+
+		movements.append({
+			"name": je.name,
+			"external_id": je.custom_external_id,
+			"direction": direction,
+			"amount": amount,
+			"category": category,
+			"reason": reason,
+			"posting_date": str(je.posting_date),
+			"creation": str(je.creation),
+		})
+
+	return {
+		"opening_entry": opening_entry_name,
+		"pos_profile": opening.pos_profile,
+		"period_start_date": str(opening.period_start_date),
+		"opening_cash": float(
+			next(
+				(r.opening_amount for r in opening.balance_details if r.mode_of_payment == "Cash"),
+				0,
+			)
+		),
+		"orders": orders,
+		"movements": movements,
+	}
