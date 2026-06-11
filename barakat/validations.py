@@ -45,3 +45,90 @@ def validate_employee_pin(doc, method):
 			f"in company <b>{company}</b>. Each employee in a company must have a unique PIN.",
 			title="Duplicate PIN",
 		)
+
+
+# POS Profile account fields — server-side mirror of the set_query filters in
+# public/js/pos_profile.js. The client filters and the Custom Field link_filters
+# only restrict the UI dropdown; they are NOT enforced on save. This guarantees
+# the same rules for API / Data Import / console writes.
+#
+# Each entry: fieldname -> (label, conditions). A condition is a (column, op, value)
+# tuple checked against the linked Account. {company} is substituted at runtime.
+POS_PROFILE_ACCOUNT_RULES = {
+	"custom_cash_account": (
+		"Cash Drawer Account",
+		[("account_type", "=", "Cash")],
+	),
+	"custom_salary_advance_account": (
+		"Salary Advance Account",
+		[("account_type", "=", "Receivable")],
+	),
+	"custom_expense_account": (
+		"Expense Account",
+		[("root_type", "=", "Expense")],
+	),
+	"custom_owner_deposit_account": (
+		"Owner Deposit Account",
+		[
+			("root_type", "in", ("Equity", "Liability")),
+			("account_type", "not in", ("Receivable", "Payable")),
+		],
+	),
+	"custom_bank_account": (
+		"Bank Account",
+		[("account_type", "=", "Bank")],
+	),
+}
+
+
+def validate_pos_profile_accounts(doc, method):
+	for fieldname, (label, conditions) in POS_PROFILE_ACCOUNT_RULES.items():
+		account = doc.get(fieldname)
+		if not account:
+			continue
+
+		acc = frappe.db.get_value(
+			"Account",
+			account,
+			["account_type", "root_type", "company", "is_group"],
+			as_dict=True,
+		)
+		if not acc:
+			frappe.throw(
+				f"<b>{label}</b>: account <b>{account}</b> does not exist.",
+				title="Invalid Account",
+			)
+
+		if acc.is_group:
+			frappe.throw(
+				f"<b>{label}</b> must be a ledger account, not a group account "
+				f"(<b>{account}</b> is a group).",
+				title="Invalid Account",
+			)
+
+		if doc.company and acc.company != doc.company:
+			frappe.throw(
+				f"<b>{label}</b> (<b>{account}</b>) belongs to company "
+				f"<b>{acc.company}</b>, but this POS Profile is for "
+				f"<b>{doc.company}</b>.",
+				title="Company Mismatch",
+			)
+
+		for column, op, value in conditions:
+			actual = acc.get(column)
+			if op == "=" and actual != value:
+				ok = False
+			elif op == "in" and actual not in value:
+				ok = False
+			elif op == "not in" and actual in value:
+				ok = False
+			else:
+				ok = True
+
+			if not ok:
+				expected = value if op == "=" else f"{op} {list(value)}"
+				frappe.throw(
+					f"<b>{label}</b> (<b>{account}</b>) has {column} "
+					f"<b>{actual}</b>, but it must be <b>{expected}</b>.",
+					title="Invalid Account",
+				)

@@ -51,6 +51,9 @@ doc_events = {
 	"Branch": {
 		"validate": "barakat.overrides.branch.validate_branch",
 	},
+	"POS Profile": {
+		"validate": "barakat.validations.validate_pos_profile_accounts",
+	},
 }
 
 doctype_js = {
