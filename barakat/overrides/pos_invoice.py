@@ -1,42 +1,10 @@
-import math
-
 import frappe
 from frappe import _
-from frappe.utils import flt, getdate
+from frappe.utils import getdate
 from erpnext.accounts.doctype.pos_invoice.pos_invoice import POSInvoice
-
-ROUNDING_THRESHOLD = 0.4
 
 
 class BarakatPOSInvoice(POSInvoice):
-	def set_rounded_total(self):
-		if not self.meta.get_field("rounded_total"):
-			return
-
-		if self.is_rounded_total_disabled():
-			self.rounded_total = 0
-			self.rounding_adjustment = 0
-		else:
-			grand = flt(self.grand_total)
-			decimal_part = grand - math.floor(grand)
-
-			if decimal_part >= ROUNDING_THRESHOLD:
-				self.rounded_total = flt(math.floor(grand) + 1, self.precision("rounded_total"))
-			else:
-				self.rounded_total = flt(math.floor(grand), self.precision("rounded_total"))
-
-			self.rounding_adjustment = flt(
-				self.rounded_total - grand, self.precision("rounding_adjustment")
-			)
-
-		self.base_rounded_total = flt(
-			self.rounded_total * self.conversion_rate, self.precision("base_rounded_total")
-		)
-		self.base_rounding_adjustment = flt(
-			self.rounding_adjustment * self.conversion_rate,
-			self.precision("base_rounding_adjustment"),
-		)
-
 	def validate_pos_opening_entry(self):
 		opening_entries = frappe.get_all(
 			"POS Opening Entry",
