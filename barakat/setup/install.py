@@ -8,7 +8,7 @@ def after_install():
 		_set_pos_invoice_type,
 		_create_misc_item,
 		_create_default_customer,
-		_create_device_custom_fields,
+		_provision_barakat_roles,
 	]:
 		try:
 			fn()
@@ -72,101 +72,17 @@ def _create_default_customer():
 	).insert(ignore_permissions=True, ignore_mandatory=True)
 
 
-def _create_device_custom_fields():
-	"""Create custom fields for the device-profile mapping and cash movement system."""
-	fields = [
-		# Branch: table of POS Profiles
-		{
-			"dt": "Branch",
-			"fieldname": "custom_pos_profiles",
-			"label": "POS Profiles",
-			"fieldtype": "Table",
-			"options": "Branch POS Profile",
-			"insert_after": "custom_pos_company",
-		},
-		# POS Profile: section break grouping all Barakat fields
-		{
-			"dt": "POS Profile",
-			"fieldname": "custom_barakat_section",
-			"label": "Barakat Settings",
-			"fieldtype": "Section Break",
-			"insert_after": "allow_partial_payment",
-		},
-		# POS Profile: which device is linked to this profile
-		{
-			"dt": "POS Profile",
-			"fieldname": "custom_device",
-			"label": "Linked Device",
-			"fieldtype": "Link",
-			"options": "Device",
-			"insert_after": "custom_barakat_section",
-			"read_only": 0,
-			"in_list_view": 1,
-		},
-		# POS Profile: which branch this profile belongs to (read-only, set by Branch validate)
-		{
-			"dt": "POS Profile",
-			"fieldname": "custom_branch",
-			"label": "Branch",
-			"fieldtype": "Link",
-			"options": "Branch",
-			"insert_after": "custom_device",
-			"read_only": 1,
-			"in_list_view": 1,
-		},
-		# POS Profile: the physical cash drawer account for this device
-		{
-			"dt": "POS Profile",
-			"fieldname": "custom_cash_account",
-			"label": "Cash Drawer Account",
-			"fieldtype": "Link",
-			"options": "Account",
-			"insert_after": "custom_branch",
-		},
-		# POS Profile: account used for the other side of salary advance movements.
-		# Must be Receivable type so ERPNext can tag the employee as a party on the JE.
-		{
-			"dt": "POS Profile",
-			"fieldname": "custom_salary_advance_account",
-			"label": "Salary Advance Account",
-			"description": "Must be a Receivable type account so ERPNext can track the balance per employee.",
-			"fieldtype": "Link",
-			"options": "Account",
-			"insert_after": "custom_cash_account",
-		},
-		# POS Profile: account used for the other side of expense movements (maintenance, petty cash, other)
-		{
-			"dt": "POS Profile",
-			"fieldname": "custom_expense_account",
-			"label": "Expense Account",
-			"description": "Used for Maintenance, Petty Cash, and Other cash out movements.",
-			"fieldtype": "Link",
-			"options": "Account",
-			"insert_after": "custom_salary_advance_account",
-		},
-		# POS Profile: account used for the other side of owner deposit movements
-		{
-			"dt": "POS Profile",
-			"fieldname": "custom_owner_deposit_account",
-			"label": "Owner Deposit Account",
-			"description": "Used when the owner adds money to the drawer. Typically an Equity or Liability account.",
-			"fieldtype": "Link",
-			"options": "Account",
-			"insert_after": "custom_expense_account",
-		},
-		# POS Profile: bank account used for the other side of bank deposit movements
-		{
-			"dt": "POS Profile",
-			"fieldname": "custom_bank_account",
-			"label": "Bank Account",
-			"description": "Used when cash is deposited from the drawer to the bank.",
-			"fieldtype": "Link",
-			"options": "Account",
-			"insert_after": "custom_owner_deposit_account",
-		},
-	]
+BARAKAT_ROLES = [
+	"Branch Supervisor",
+	"Cashier",
+	"Accountant",
+	"Inventory Keeper",
+	"HR",
+]
 
-	for f in fields:
-		if frappe.db.exists("Custom Field", {"dt": f["dt"], "fieldname": f["fieldname"]}):
+
+def _provision_barakat_roles():
+	for role_name in BARAKAT_ROLES:
+		if frappe.db.exists("Role", role_name):
 			continue
-		frappe.get_doc({"doctype": "Custom Field", **f}).insert(ignore_permissions=True)
+		frappe.get_doc({"doctype": "Role", "role_name": role_name}).insert(ignore_permissions=True)

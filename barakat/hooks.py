@@ -11,31 +11,76 @@ fixtures = [
 		"filters": [["name", "in", ["POS Employee Branch", "Device", "Branch POS Profile"]]],
 	},
 	{
+		"dt": "Role",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Branch Supervisor",
+					"Cashier",
+					"Accountant",
+					"Inventory Keeper",
+					"HR",
+				],
+			]
+		],
+	},
+	{
 		"dt": "Custom Field",
 		"filters": [
 			[
-				"fieldname",
+				"name",
 				"in",
 				[
-					"custom_pos_company",
-					"custom_pos_profiles",
-					"custom_pos_pin",
-					"custom_role_preset",
-					"custom_pos_branches",
-					"custom_external_id",
-					"custom_operator_employee",
-					"custom_pos_opening_entry",
-					"custom_device_id",
-					"custom_opened_by_staff",
-					"custom_closed_by_staff",
-					"custom_barakat_section",
-					"custom_device",
-					"custom_branch",
-					"custom_cash_account",
-					"custom_salary_advance_account",
-					"custom_expense_account",
-					"custom_owner_deposit_account",
-					"custom_bank_account",
+					# Branch
+					"Branch-custom_pos_company",
+					"Branch-custom_pos_profiles",
+					# POS Profile
+					"POS Profile-custom_barakat_section",
+					"POS Profile-custom_device",
+					"POS Profile-custom_branch",
+					"POS Profile-custom_cash_account",
+					"POS Profile-custom_salary_advance_account",
+					"POS Profile-custom_expense_account",
+					"POS Profile-custom_owner_deposit_account",
+					"POS Profile-custom_bank_account",
+					# Employee
+					"Employee-custom_pos_pin",
+					"Employee-custom_role_preset",
+					"Employee-custom_pos_branches",
+					"Employee-custom_base_salary",
+					"Employee-custom_salary_currency",
+					"Employee-custom_salary_period",
+					"Employee-custom_expected_work_days",
+					"Employee-custom_work_start_time",
+					"Employee-custom_work_end_time",
+					# Item / Item Group
+					"Item-custom_company",
+					"Item Group-custom_company",
+					# Supplier
+					"Supplier-custom_company",
+					# Mode of Payment
+					"Mode of Payment-custom_company",
+					# Currency Exchange
+					"Currency Exchange-custom_company",
+					# Customer
+					"Customer-custom_company",
+					"Customer-custom_branch",
+					"Customer-custom_date_of_birth",
+					# Sales Invoice / POS Invoice
+					"Sales Invoice-custom_external_id",
+					"Sales Invoice-custom_operator_employee",
+					"POS Invoice-custom_external_id",
+					"POS Invoice-custom_operator_employee",
+					# Journal Entry
+					"Journal Entry-custom_external_id",
+					"Journal Entry-custom_pos_opening_entry",
+					# POS Opening / Closing Entry
+					"POS Opening Entry-custom_device_id",
+					"POS Opening Entry-custom_opened_by_staff",
+					"POS Closing Entry-custom_device_id",
+					"POS Closing Entry-custom_closed_by_staff",
 				],
 			]
 		],
