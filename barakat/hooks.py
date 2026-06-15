@@ -99,11 +99,15 @@ doc_events = {
 	"POS Profile": {
 		"validate": "barakat.validations.validate_pos_profile_accounts",
 	},
+	"Item": {
+		"validate": "barakat.validations.validate_item_disable",
+	},
 }
 
 doctype_js = {
 	"Employee": "public/js/employee.js",
 	"POS Profile": "public/js/pos_profile.js",
+	"Item": "public/js/item.js",
 }
 
 override_doctype_class = {

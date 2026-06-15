@@ -1,6 +1,47 @@
 import re
 
 import frappe
+from frappe import _
+
+
+def validate_item_disable(doc, method):
+	if not doc.disabled:
+		return
+
+	was_disabled_before = frappe.db.get_value("Item", doc.name, "disabled")
+	if was_disabled_before:
+		return
+
+	item_company = doc.custom_company
+	if not item_company:
+		return
+
+	open_shifts = frappe.db.sql(
+		"""
+		SELECT name, pos_profile, company
+		FROM `tabPOS Opening Entry`
+		WHERE status = 'Open'
+		  AND company = %s
+		LIMIT 5
+		""",
+		(item_company,),
+		as_dict=True,
+	)
+
+	if not open_shifts:
+		return
+
+	shift_lines = "".join(
+		f"<li><b>{s['name']}</b> — {s['pos_profile']} ({s['company']})</li>"
+		for s in open_shifts
+	)
+	frappe.throw(
+		title=_("Cannot Disable Item"),
+		msg=_(
+			"You cannot disable this item while there are open POS shifts for company <b>{0}</b>. "
+			"Please close all open POS Opening Entries first:<ul>{1}</ul>"
+		).format(item_company, shift_lines),
+	)
 
 
 def validate_employee_pin(doc, method):
