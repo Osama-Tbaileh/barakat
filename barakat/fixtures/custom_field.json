@@ -60,6 +60,7 @@
     "label": "Cash Drawer Account",
     "fieldtype": "Link",
     "options": "Account",
+    "reqd": 1,
     "insert_after": "custom_branch"
   },
   {
@@ -71,6 +72,7 @@
     "description": "Must be a Receivable type account so ERPNext can track the balance per employee.",
     "fieldtype": "Link",
     "options": "Account",
+    "reqd": 1,
     "insert_after": "custom_cash_account"
   },
   {
@@ -82,6 +84,7 @@
     "description": "Used for Maintenance, Petty Cash, and Other cash out movements.",
     "fieldtype": "Link",
     "options": "Account",
+    "reqd": 1,
     "insert_after": "custom_salary_advance_account"
   },
   {
@@ -93,6 +96,7 @@
     "description": "Used when the owner adds money to the drawer. Typically an Equity or Liability account.",
     "fieldtype": "Link",
     "options": "Account",
+    "reqd": 1,
     "insert_after": "custom_expense_account"
   },
   {
@@ -104,6 +108,7 @@
     "description": "Used when cash is deposited from the drawer to the bank.",
     "fieldtype": "Link",
     "options": "Account",
+    "reqd": 1,
     "insert_after": "custom_owner_deposit_account"
   },
   {

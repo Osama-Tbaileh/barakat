@@ -6,6 +6,7 @@ def after_install():
 		_enable_negative_stock,
 		_set_session_expiry,
 		_set_pos_invoice_type,
+		_set_commercial_rounding,
 		_create_misc_item,
 		_create_default_customer,
 		_provision_barakat_roles,
@@ -23,6 +24,10 @@ def _enable_negative_stock():
 
 def _set_pos_invoice_type():
 	frappe.db.set_single_value("POS Settings", "invoice_type", "POS Invoice")
+
+
+def _set_commercial_rounding():
+	frappe.db.set_single_value("System Settings", "rounding_method", "Commercial Rounding")
 
 
 def _set_session_expiry():
