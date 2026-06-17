@@ -89,6 +89,7 @@ fixtures = [
 
 after_install = "barakat.setup.install.after_install"
 setup_wizard_complete = "barakat.setup.install.after_setup_wizard"
+after_migrate = "barakat.setup.install.after_migrate"
 
 doc_events = {
 	"Employee": {

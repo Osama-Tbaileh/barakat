@@ -28,6 +28,18 @@ def after_setup_wizard(args=None):
 	frappe.db.commit()
 
 
+def after_migrate():
+	if not frappe.db.exists("Item Group", "All Item Groups"):
+		return
+	if frappe.db.exists("Item", "MISC"):
+		return
+	try:
+		_create_misc_item()
+		frappe.db.commit()
+	except Exception as e:
+		frappe.log_error(f"barakat after_migrate: _create_misc_item failed: {e}", "Install")
+
+
 def _enable_negative_stock():
 	frappe.db.set_single_value("Stock Settings", "allow_negative_stock", 1)
 
