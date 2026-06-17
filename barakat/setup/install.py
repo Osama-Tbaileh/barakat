@@ -17,7 +17,7 @@ def after_install():
 	frappe.db.commit()
 
 
-def after_setup_wizard():
+def after_setup_wizard(args=None):
 	for fn in [
 		_create_misc_item,
 	]:
