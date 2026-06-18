@@ -6,20 +6,17 @@ from erpnext.accounts.doctype.pos_invoice.pos_invoice import POSInvoice
 
 class BarakatPOSInvoice(POSInvoice):
 	def set_outstanding_amount(self):
-		# Standard POS Invoice sets outstanding = (rounded_total or grand_total) -
-		# paid_amount and ignores write_off_amount entirely. That leaves a fully
-		# written-off remainder — e.g. a 0.5 total that rounds to 0, where the
-		# customer pays nothing and the 0.5 is written off — stuck as Unpaid.
-		# Run ERPNext's standard logic first, then subtract the write-off so the
-		# invoice settles to Paid. This only affects invoices that actually carry a
-		# write-off (write_off_amount > 0); every other invoice is untouched. It
-		# also matches the ledger, which already books the write-off through the
-		# inherited Sales Invoice GL posting.
+		# ERPNext's base computes `total = flt(rounded_total) or flt(grand_total)`.
+		# Python's `or` treats a legitimate rounded_total of 0 as falsy and wrongly
+		# falls back to grand_total — so a small total that rounds down to 0 (e.g. a
+		# 0.5 cash sale) is left Unpaid even though the customer owes nothing. The
+		# rounding difference is already booked to the Round Off account via
+		# rounding_adjustment, so nothing is actually receivable. Run the standard
+		# logic, then settle the invoice to Paid in exactly this rounded-to-0 case.
+		# Every other invoice is untouched.
 		super().set_outstanding_amount()
-		if flt(self.write_off_amount):
-			self.outstanding_amount = max(
-				0.0, flt(self.outstanding_amount) - flt(self.write_off_amount)
-			)
+		if flt(self.rounding_adjustment) and not flt(self.rounded_total):
+			self.outstanding_amount = 0.0
 
 	def validate_pos_opening_entry(self):
 		opening_entries = frappe.get_all(
