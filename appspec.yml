@@ -1,0 +1,19 @@
+# CodeDeploy bundle for a Frappe custom app (barakat / iztechvalley_gateway / iztechvalley_core)
+# Deploys NO files into the bench; instead the hook scripts git-pull the existing
+# apps/<APP> checkout to the right branch and run bench migrate/build/restart.
+# The agent runs hooks as root; the script drops to the `frappe` user for bench.
+version: 0.0
+os: linux
+hooks:
+  ApplicationStop:
+    - location: scripts/codedeploy/validate.sh   # pre-check the bench is reachable
+      timeout: 120
+      runas: root
+  AfterInstall:
+    - location: scripts/codedeploy/deploy.sh      # git pull + migrate + build + restart
+      timeout: 1800
+      runas: root
+  ValidateService:
+    - location: scripts/codedeploy/validate.sh    # confirm site responds after deploy
+      timeout: 300
+      runas: root
